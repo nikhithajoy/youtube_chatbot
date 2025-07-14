@@ -5,9 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.16.4",
     "ffmpeg>=1.4",
     "pytube>=15.0.0",
     "sentence-transformers>=5.0.0",
+    "sqlalchemy>=2.0.41",
     "youtube-transcript-api>=1.1.1",
     "yt-dlp>=2025.6.30",
 ]

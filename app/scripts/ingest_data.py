@@ -1,30 +1,38 @@
 import json
-import sys
-from pathlib import Path
-
 from app.youtube.fetcher import YouTubeVideoFetcher
-
-# Add root path to sys.path
-sys.path.append(str(Path(__file__).resolve().parents[2]))  # two levels up
-
+from app.database.models import YouTubeVideo
+from app.database.session import SessionLocal, engine, Base
 
 if __name__ == "__main__":
     video_urls = [
-        "https://youtu.be/RGaW82k4dK4?si=HLF8xj-IckgVTDbq"
+        "https://www.youtube.com/watch?v=aircAruvnKk",
+        "https://www.youtube.com/watch?v=Ew7fOQpkKBw"
     ]
 
     fetcher = YouTubeVideoFetcher()
-    all_data = []
+    db = SessionLocal()
 
     for url in video_urls:
         video_data = fetcher.fetch_video_data(url)
         if video_data:
-            all_data.append(video_data.model_dump(mode="json"))
+            # Check if already exists
+            exists = db.query(YouTubeVideo).filter_by(id=video_data.video_id).first()
+            if exists:
+                print(f"[SKIP] {video_data.video_id} already in DB")
+                continue
 
-    # Ensure data folder exists
-    Path("data").mkdir(parents=True, exist_ok=True)
+            video = YouTubeVideo(
+                id=video_data.video_id,
+                title=video_data.title,
+                description=video_data.description,
+                duration_sec=video_data.duration_sec,
+                transcription=video_data.transcription,
+                url=video_data.url
+            )
 
-    with open("data/metadata.json", "w", encoding="utf-8") as f:
-        json.dump(all_data, f, indent=4, ensure_ascii=False)
+            db.add(video)
 
-    print(f"[Success] Successfully fetched and saved {len(all_data)} videos.")
+    db.commit()
+    db.close()
+
+    print(f"All videos ingested into DB.")
