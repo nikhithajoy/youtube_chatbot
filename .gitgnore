@@ -1,0 +1,9 @@
+# .gitignore
+__pycache__/
+.env
+*.pyc
+*.db
+*.log
+venv/
+.embeddings/
+data/
