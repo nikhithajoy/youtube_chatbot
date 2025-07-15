@@ -61,7 +61,7 @@ if __name__ == "__main__":
             description=video_data.description,
             duration_sec=video_data.duration_sec,
             transcription=video_data.transcription,
-            url=video_data.url,
+            url=str(video_data.url),
             channel_id=new_channel.id
         )
         db.add(video)
