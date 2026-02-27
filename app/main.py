@@ -3,15 +3,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core.config import get_settings
+from app.core.logger import configure_logging, get_logger
 
 
 settings = get_settings()   
 
+configure_logging()
+logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting YouTube Channel Chatbot...")
-    print(f"Environment: {settings.ENVIRONMENT}")
+    logger.info("Starting YouTube Channel Chatbot...")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
 
     # TODO: Initialize DB connection
     # TODO: Initialize vector store
@@ -19,7 +22,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    print("Shutting down application...")
+    logger.info("Shutting down application...")
     # TODO: Close DB connections
     # TODO: Gracefully shutdown background workers
     
