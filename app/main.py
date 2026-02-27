@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import get_settings
 from app.core.logger import configure_logging, get_logger
+from app.api.routes import channel
 
 
 settings = get_settings()   
@@ -43,6 +44,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(channel.router)
 
 # Health check endpoint
 @app.get("/health")
