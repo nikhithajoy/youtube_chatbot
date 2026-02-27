@@ -1,5 +1,6 @@
 from functools import lru_cache
-from pydantic_settings import BaseSettings
+from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 class Settings(BaseSettings):
@@ -21,9 +22,12 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 800
     CHUNK_OVERLAP: int = 100
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Use pydantic-settings v2 style model config so the env_file is applied
+    # parents[2] => repository root (../.. from this file: app/core/config.py)
+    model_config = SettingsConfigDict(
+        env_file=str(Path(__file__).resolve().parents[2] / ".env"),
+        case_sensitive=True,
+    )
 
 
 @lru_cache
