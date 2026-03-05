@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from app.core.config import get_settings
 from app.core.logger import configure_logging, get_logger
 from app.api.routes import channel
+from app.db.base import connect_to_mongo, close_mongo_connection
 
 
 settings = get_settings()   
@@ -17,15 +18,15 @@ async def lifespan(app: FastAPI):
     logger.info("Starting YouTube Channel Chatbot...")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
 
-    # TODO: Initialize DB connection
+    await connect_to_mongo()
     # TODO: Initialize vector store
     # TODO: Warm up embedding model
 
     yield
 
     logger.info("Shutting down application...")
-    # TODO: Close DB connections
-    # TODO: Gracefully shutdown background workers
+    await close_mongo_connection()
+    logger.info("Application shutdown complete")
     
     
 app = FastAPI(

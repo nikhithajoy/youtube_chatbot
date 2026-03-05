@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     
-    DATABASE_URL: str = "sqlite:///./test.db"
+    DATABASE_URL: str = Field(..., env="DATABASE_URL")
     
     OPENAI_API_KEY: str = Field(..., env="OPENAI_API_KEY")
     EMBEDDING_MODEL: str = "text-embedding-3-small"
