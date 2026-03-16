@@ -5,6 +5,7 @@ from datetime import datetime
 from app.db.repository import ChannelRepository, VideoRepository
 from app.ingestion.youtube_client import YouTubeClient
 from app.core.logger import get_logger
+from app.ingestion.transcript_service import TranscriptService
 
 logger = get_logger(__name__)
 
@@ -83,7 +84,15 @@ class ChannelService:
         # Store videos
         await self.video_repository.insert_video(videos_models)
         logger.info(f"Inserted {len(videos_models)} videos into database for channel {channel_id}")
-        
+
+        # Fetch and store transcripts for each video. 
+        transcript_service = TranscriptService(self.video_repository)
+        for v in videos_models:
+            try:
+                await transcript_service.ingest_transcript(v.video_id)
+            except Exception as e:
+                logger.warning(f"Failed to ingest transcript for {v.video_id}: {e}")
+
         return {
             "channel_id": channel_id,
             "total_videos": len(videos_data)

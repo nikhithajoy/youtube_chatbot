@@ -8,3 +8,4 @@ venv/
 .embeddings/
 data/
 .venv/
+logs/

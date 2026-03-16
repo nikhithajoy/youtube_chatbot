@@ -49,3 +49,12 @@ class VideoRepository:
         async for doc in cursor:
             videos.append(doc)
         return videos
+    
+    async def update_video_transcript(self, video_id: str, transcript: str):
+
+        await self.collection.update_one(
+            {"video_id": video_id},
+            {"$set": {"transcript": transcript}}
+        )
+
+        logger.info(f"Transcript updated for video {video_id}")
