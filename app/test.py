@@ -7,18 +7,27 @@ from pathlib import Path
 if Path.cwd().name == "app":
 	sys.path.insert(0, str(Path.cwd().parent))
 
+import asyncio
 from app.ingestion.youtube_client import YouTubeClient
 from app.ingestion.channel_service import ChannelService
+from app.db.repository import ChannelRepository, VideoRepository
+from app.db.base import connect_to_mongo, close_mongo_connection, get_database
 
 
-def run():
-	client = YouTubeClient()
-	channel_service = ChannelService(client)
-
-	channel_url = "https://www.youtube.com/@freecodecamp"
-	result = channel_service.ingest_channel(channel_url)
-	print(result)
+async def run():
+    await connect_to_mongo()
+    db = get_database()
+    
+    channel_repo = ChannelRepository(db)
+    video_repo = VideoRepository(db)
+    client = YouTubeClient()
+    channel_service = ChannelService(client, channel_repo, video_repo)
+    channel_url = "https://www.youtube.com/@freecodecamp"
+    result = await channel_service.ingest_channel(channel_url)
+    print(result)
+ 
+    await close_mongo_connection()
 
 
 if __name__ == "__main__":
-	run()
+    asyncio.run(run())

@@ -34,9 +34,12 @@ class VideoService:
         
         response = request.execute()
         
+        MAX_VIDEOS = 20
         videos: list[Video] = []
         
         for item in response["items"]:
+            if len(videos) >= MAX_VIDEOS:
+                break
             video = {
                 "video_id": item["id"]["videoId"],
                 "channel_id": channel_id,
