@@ -4,6 +4,8 @@ import asyncio
 from app.core.logger import get_logger
 from app.db.repository import VideoRepository
 from app.db.base import get_database
+from app.transcription.audio_downloader import download_audio
+from app.transcription.speech_to_text import generate_transcript
 
 logger = get_logger(__name__)
 
@@ -38,6 +40,7 @@ class TranscriptService:
             logger.info(f"Transcript stored for video {video_id}")
 
         except Exception as e:
-            logger.warning(
-                f"Transcript unavailable for video {video_id}: {str(e)}"
-            )
+            logger.info(f"Transcript not available for video {video_id}, running fallback speech-to-text")
+            audio_path = download_audio(video_id)
+            text = generate_transcript(audio_path)
+            return text
