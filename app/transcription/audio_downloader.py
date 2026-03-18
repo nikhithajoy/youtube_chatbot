@@ -16,7 +16,7 @@ def download_audio(video_id: str) -> str:
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
-            "preferredquality": "192",
+            "preferredquality": "64",
         }],
         "quiet": True,
     }
